@@ -1,0 +1,49 @@
+{% extends 'theme.html' %}
+
+{% block main %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-lg-5 col-md-7 col-sm-10">
+        <div class="border shadow p-4 rounded bg-white">
+            <h2 class="text-center text-success mb-4">Login to AmrutAahar</h2>
+
+            <!-- Display Flash Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} text-center">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Signin Form -->
+            <form method="post" action="{% url 'signin' %}">
+                {% csrf_token %}
+                
+                <!-- Preserve 'next' Parameter -->
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Email ID</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" a href="{% url 'home' %}" class="btn btn-success btn-block">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center mt-3">
+                Don't have an account? <a href="{% url 'signup' %}" class="text-primary">Sign Up</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

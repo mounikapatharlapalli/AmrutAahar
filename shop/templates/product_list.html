@@ -1,0 +1,107 @@
+{% extends 'theme.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        
+        <!-- Sidebar with Categories -->
+        <div class="col-lg-3 mb-4">
+            <div class="list-group shadow-sm border-0 sidebar-menu rounded-3 overflow-hidden">
+                <!-- "All Products" link -->
+                <a href="{% url 'product_list' %}" 
+                   class="list-group-item list-group-item-action py-3 
+                   {% if not selected_category %} active bg-success text-white {% endif %}">
+                    <i class="fas fa-th-large me-2"></i> All Products
+                </a>
+
+                <!-- Dynamic Category links -->
+                {% for j in categories %}
+                <a href="{% url 'product_list' %}?category={{ j.id }}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" 
+                   class="list-group-item list-group-item-action py-3 
+                   {% if selected_category and selected_category.id == j.id %} active bg-success text-white {% endif %}">
+                    <i class="fas fa-tag me-2"></i> {{ j.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Product Listings -->
+        <div class="col-lg-9">
+            
+            <!-- Heading showing current category -->
+            <h2 class="mb-4 text-center text-success">
+                {% if selected_category %}
+                    {{ selected_category.name }}
+                {% else %}
+                    All Products
+                {% endif %}
+            </h2>
+
+            <!-- Price Filter Form -->
+            <form method="GET" action="" class="mb-4 row g-3 align-items-center justify-content-center">
+                {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category.id }}">
+                {% endif %}
+
+                <div class="col-auto">
+                    <label for="min_price" class="col-form-label fw-bold">Min Price:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="min_price" id="min_price" 
+                           class="form-control shadow-sm" value="{{ min_price }}" min="0" placeholder="₹0">
+                </div>
+
+                <div class="col-auto">
+                    <label for="max_price" class="col-form-label fw-bold">Max Price:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="max_price" id="max_price" 
+                           class="form-control shadow-sm" value="{{ max_price }}" min="0" placeholder="₹5000">
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success shadow-sm px-4">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
+                </div>
+            </form>
+
+            <!-- Product Grid -->
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+                    <div class="card shadow-sm rounded-3 border-0 h-100">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-success fw-bold">{{ product.name }}</h5>
+                            <p class="card-text text-muted small">{{ product.desc|truncatechars:100 }}</p>
+                            <h6 class="text-danger fw-semibold mb-3">₹{{ product.price }}</h6>
+
+                            <div class="mt-auto d-flex justify-content-between">
+                                <form action="{% url 'add_to_cart' product.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        🛒 Add to Cart
+                                    </button>
+                                </form>
+
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-secondary btn-sm">
+                                    🔍 View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">No products available in this price range.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

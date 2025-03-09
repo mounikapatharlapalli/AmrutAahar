@@ -1,0 +1,131 @@
+{% extends 'theme.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5">
+    <h2 class="mb-4">🛒 Your Cart</h2>
+
+    {% if cart_items %}
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Product</th>
+                    <th>Image</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="50"></td>
+                    <td>₹{{ item.product.price }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity({{ item.product.id }}, -1)">-</button>
+                        <span id="quantity-{{ item.product.id }}">{{ item.quantity }}</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity({{ item.product.id }}, 1)">+</button>
+                    </td>
+                    <td id="total-{{ item.product.id }}">₹{{ item.total_price }}</td>
+                    <td>
+                        <form action="{% url 'remove_from_cart' item.product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">❌ Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Discount Code Section -->
+        <div class="mt-3">
+            <input type="text" id="discount-code" class="form-control w-50 mb-2" placeholder="Enter Discount Code">
+            <button class="btn btn-primary" onclick="applyDiscount()">Apply</button>
+            
+            <!-- Discount Message Display -->
+            <div id="discount-message" class="mt-2"></div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <h4>Total Items: <span id="total-items">{{ total_items }}</span></h4>
+            <h4 class="text-danger">Total Price: ₹<span id="cart-total">{{ cart_total }}</span></h4>
+        </div>
+
+        <!-- Checkout Button -->
+        <form action="{% url 'buy_now' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="cart_total" id="final-cart-total" value="{{ cart_total }}">
+            <button type="submit" class="btn btn-success px-4 py-2 mt-3">🎁 Buy Now</button>
+        </form>
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+
+<!-- CSRF Token -->
+<script>
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function updateQuantity(productId, change) {
+    let quantityElement = document.getElementById(`quantity-${productId}`);
+    let totalElement = document.getElementById(`total-${productId}`);
+    let cartTotalElement = document.getElementById("cart-total");
+    let finalCartTotalElement = document.getElementById("final-cart-total");
+
+    let currentQuantity = parseInt(quantityElement.innerText);
+    let newQuantity = currentQuantity + change;
+    if (newQuantity < 1) return;
+
+    fetch(`/update_cart/${productId}/${newQuantity}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: JSON.stringify({ quantity: newQuantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            quantityElement.innerText = data.new_quantity;
+            totalElement.innerText = `₹${data.new_total}`;
+            cartTotalElement.innerText = `₹${data.cart_total}`;
+            finalCartTotalElement.value = data.cart_total;
+        } else {
+            alert(data.error || "Something went wrong!");
+        }
+    });
+}
+
+function applyDiscount() {
+    let discountCode = document.getElementById("discount-code").value;
+    let cartTotalElement = document.getElementById("cart-total");
+    let finalCartTotalElement = document.getElementById("final-cart-total");
+    let discountMessage = document.getElementById("discount-message");
+
+    fetch(`/apply_discount/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: JSON.stringify({ discount_code: discountCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            cartTotalElement.innerText = `₹${data.new_cart_total}`;
+            finalCartTotalElement.value = data.new_cart_total;
+            discountMessage.innerHTML = `<span class="text-success">✅ Discount Applied! New total: ₹${data.new_cart_total}</span>`;
+        } else {
+            discountMessage.innerHTML = `<span class="text-danger">❌ ${data.message}</span>`;
+        }
+    });
+}
+</script>
+{% endblock %}

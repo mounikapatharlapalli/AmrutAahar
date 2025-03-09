@@ -1,0 +1,19 @@
+{% extends 'theme.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5 text-center">
+    <h2 class="text-success">🎉 Order Placed Successfully!</h2>
+    <p>Thank you, <strong>{{ order_details.name }}</strong>! Your order has been placed.</p>
+
+    <h4 class="mt-4">📦 Delivery Details</h4>
+    <p>{{ order_details.address }}, {{ order_details.city }}, {{ order_details.state }} - {{ order_details.pincode }}</p>
+    <p><strong>Phone:</strong> 8985859494{{ order_details.phone }}</p>
+    <p>Expected Delivery:2 days from today <strong>{{ order_details.expected_delivery }}</strong></p>
+
+    <h4 class="mt-4">🚛 Track Your Order</h4>
+    <p>Your order is being processed. You can track it in your <a href="#">Orders Page</a>.</p>
+
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+</div>
+{% endblock %}

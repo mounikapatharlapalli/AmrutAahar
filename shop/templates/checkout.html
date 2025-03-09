@@ -1,0 +1,109 @@
+{% extends 'theme.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5">
+    <h2 class="text-center">Checkout</h2>
+
+    <!-- Order Summary -->
+    <table class="table table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>₹{{ item.product.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="text-right">Total: ₹<span id="checkout-total">{{ cart_total }}</span></h4>
+    <h5 class="text-success">🚚 Expected Delivery: <strong>Three days from Today!</strong></h5>
+
+    <!-- Order Delivery Details Form -->
+    <div class="mt-4">
+        <h4>📦 Delivery Details</h4>
+        <form id="order-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="pincode">Pincode</label>
+                <input type="text" id="pincode" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" id="state" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" class="form-control" required>
+            </div>
+        </form>
+    </div>
+
+    <!-- Payment Button -->
+    <div class="d-flex flex-column align-items-center">
+      <button onclick="window.location.href='{% url 'success' %}'" 
+              class="btn btn-primary btn-lg w-50 my-2">
+          Pay with Razorpay
+      </button>
+  </div>
+
+
+<!-- 
+    Razorpay Payment Integration 
+-->
+<!-- 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    // Ensure cart total is correctly converted to paisa for Razorpay
+    var totalAmount = Math.round(parseFloat("{{ cart_total|floatformat:2 }}") * 100);
+
+    var options = {
+        "key": "YOUR_LIVE_RAZORPAY_KEY",
+        "amount": totalAmount,  // Send updated total amount
+        "currency": "INR",
+        "name": "Your Store Name",
+        "description": "Order Payment",
+        "image": "https://example.com/image/rzp.jpg",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response) {
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            window.location.href = "{% url 'home' %}";
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    document.getElementById('rzp-button1').onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+    };
+</script>
+-->
+
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'theme.html' %}
+{% load static %}
+
+{% block main %}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #16a085;
+            font-size: 24px;
+            margin-top: 10px;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .about-img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 50%;
+            margin: 20px 0;
+        }
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #16a085;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #13856e;
+        }
+        /* Contact Us Section */
+        .contact-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+        .contact-info {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #444;
+        }
+        .contact-info i {
+            color: #16a085;
+            margin-right: 10px;
+        }
+        .social-icons {
+            margin-top: 15px;
+        }
+        .social-icons a {
+            text-decoration: none;
+            color: #16a085;
+            font-size: 24px;
+            margin: 0 10px;
+            transition: 0.3s;
+        }
+        .social-icons a:hover {
+            color: #13856e;
+        }
+    </style>
+
+    <div class="container">
+        <!-- About Us -->
+        <h1>Welcome to <span class="highlight">Amrut Aahar</span></h1>
+        <img src="/media/img/about.jpg" alt="Healthy Food" class="about-img">
+        <h2>Wholesome. Nutritious. Delicious.</h2>
+        <p>At <strong>Amrut Aahar</strong>, we believe that food is more than just fuel—it’s a **way of life**.  
+        Our mission is to bring you the **freshest, healthiest, and tastiest** food options, sourced with love and care.</p>
+        
+        <p>We are committed to promoting **health and wellness** through natural ingredients, traditional recipes,  
+        and sustainable food practices.</p>
+        
+        <p>Join us on this journey towards a **healthier and happier lifestyle**!</p>
+
+        <a href="{% url 'home' %}" class="btn">Explore Our Products</a>
+
+        <!-- Contact Us -->
+        <div class="contact-section">
+            <h2>Contact Us</h2>
+            <p>Have questions or need assistance? Get in touch with us!</p>
+            <div class="contact-info">
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123 Healthy Street, Wellness City, India</p>
+                <p><i class="fas fa-envelope"></i> Email: <a href="mailto:support@amrutaahar.com">support@amrutaahar.com</a></p>
+                <p><i class="fas fa-phone"></i> Phone: +91 98765 43210</p>
+            </div>
+            <div class="social-icons">
+                <a href="https://facebook.com/amrutaahar" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://instagram.com/amrutaahar" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/amrutaahar" target="_blank"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FontAwesome Icons (if not already included in your project) -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+
+{% endblock %}
